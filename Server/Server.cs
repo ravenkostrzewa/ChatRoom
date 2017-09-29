@@ -16,6 +16,8 @@ namespace Server
         TcpListener server;
         Dictionary<string, Client> Clients = new Dictionary<string, Client>();
         Queue<Message> Messages = new Queue<Message>();
+        int chatters;
+        int chattingNow;
 
         public Server()
         {
@@ -44,14 +46,23 @@ namespace Server
         public void AddMessageToQueue(Message body)
         {
             Messages.Enqueue(body);
-
         }
 
         public void SendMessage()
         {
-            Console.WriteLine("Enter your message to send to " + client + ".");
+            Console.WriteLine("Enter your message for " + client + ".");
             Console.ReadLine();
         }
+            public void NotifyOfChangeInChatters()
+            {
+                List<string> chatters = new List<string>();
+                List<string> chattingNow = new List<string>();
 
-        }
+                if (chattingNow != chatters)
+                {
+                    Console.WriteLine("Chatting Now: " + chattingNow);
+                    chatters = chattingNow;
+                }
+           }
     }
+}
