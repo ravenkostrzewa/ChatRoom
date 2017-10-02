@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Client
+    public class Client
     {
         NetworkStream stream;
         TcpClient client;
         public string UserId;
+        public string name;
         public Client(NetworkStream Stream, TcpClient Client)
         {
             stream = Stream;

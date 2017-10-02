@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NewChatter
+namespace Server
 {
-    interface INotifiable
+    public interface ILogger
     {
-
+        void Save();
     }
 }

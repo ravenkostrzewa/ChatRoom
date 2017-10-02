@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Message
+    public class Message
     {
         public Client sender;
         public string Body;
