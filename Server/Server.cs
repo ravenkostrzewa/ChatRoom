@@ -37,6 +37,7 @@ namespace Server
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
             client = new Client(stream, clientSocket);
+            NotifyOfChangeInChatters();
         }
         private void Respond(string message)
         {
@@ -53,7 +54,7 @@ namespace Server
             Console.WriteLine("Enter your message for " + client + ".");
             Console.ReadLine();
         }
-            public void NotifyOfChangeInChatters()
+        public void NotifyOfChangeInChatters()
             {
                 List<string> chatters = new List<string>();
                 List<string> chattingNow = new List<string>();

@@ -17,6 +17,3 @@ namespace Client
         }
     }
 }
-
-
-
