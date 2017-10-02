@@ -26,11 +26,11 @@ namespace Client
             stream = clientSocket.GetStream();
         }
 
-        public void GetUserName()
-        {
-            Console.WriteLine("Please enter your username.");
-            userName = Console.ReadLine();
-        }
+        //public void GetUserName()
+        //{
+        //    Console.WriteLine("Please enter your username.");
+        //    userName = Console.ReadLine();
+        //}
 
         public void Send()
         {
