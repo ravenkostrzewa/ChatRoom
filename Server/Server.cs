@@ -27,70 +27,69 @@ namespace Server
         public string userInput;
         public bool inChatRoom;
         public bool privateChat;
-        public interface ILogger { };
         public string fileName;
         private ILogger logger;
-        public string name;
+        //public string userName;
+        public string DateTime;
+        private Logger logger1;
 
-
-        public Server()
+        public Server(ILogger logger)
         {
             server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
             server.Start();
-            this.logger = Ilogger;
+            this.logger = logger;
         }
 
-        public void PublicChatLog(string strCategory, string strMessage)
+
+        public void LogPublicChat(string userName, string message, string DateTime)
         {
             StreamWriter writer = new StreamWriter(new FileStream(fileName, FileMode.Append));
 
-            writer.WriteLine("{0}{1}", strCategory, strMessage);
+            writer.WriteLine("{0}{1}", userName, message, DateTime);
 
             StreamReader reader = new StreamReader(new FileStream(fileName, FileMode.Append));
-            try
-            {
-                reader.ReadLine("{0}{1}", strCategory, strMessage);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                Console.WriteLine(strMessage);
-            }
-        }
+            //try
+            //{
+            //    reader.ReadLine("{0}{1}", userName, message, DateTime);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.ToString());
+            //}
+            //finally
+            //{
+            //    Console.WriteLine(message);
+          //  }
+           }
 
+        //public void LogPublicChat()
+        //{
+        //    StreamWriter writer = new StreamWriter(new FileStream(fileName, FileMode.Append));
+        //    writer.WriteLine("{0}{1}", userName, message, DateTime);
+        //    StreamReader reader = new StreamReader(new FileStream(fileName, FileMode.Append));
+        //    reader.ReadLine();
+        //    try
+        //    {
 
-
-        public void PublicChatLog(string strCategory, string strMessage)
-        {
-            StreamWriter writer = new StreamWriter(new FileStream(fileName, FileMode.Append));
-            writer.WriteLine("{0}{1}", strCategory, strMessage);
-            StreamReader reader = new StreamReader(new FileStream(fileName, FileMode.Append));
-            reader.ReadLine();
-            try
-            {
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                Console.WriteLine(strMessage);
-            }
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.ToString());
+        //    }
+        //    finally
+        //    {
+        //        Console.WriteLine(userName, message, DateTime);
+        //    }
+        //}
 
         public void Run()
         {
 
             ClientName();
             AcceptClient();
-            message = client.Receive();
-            Respond(message);
-            PublicChatLog();
+            //message = client.Receive();
+            //Respond(message);
+            Chat();
             LeaveChatroom();
         }
 
@@ -106,20 +105,19 @@ namespace Server
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
             client = new Client(stream, clientSocket);
-            ClientName();
+            //ClientName();
             NotificationOfNewChatter();
         }
 
         public void ClientName()
         {
             Console.WriteLine("What is your name?");
-            client.name = Console.ReadLine();
+            userName = Console.ReadLine();
         }
-
 
         private void Respond(string message)
         {
-            for (client.name)
+            if (client.name == userName)
             {
                 Console.WriteLine(client.name + " enter your message");
                 message = Console.ReadLine();
@@ -140,11 +138,11 @@ namespace Server
 
         public void CreatePrivateChatroom()
         {
-            for (client.name)
+            if (client.name == userName)
             {
                 Console.WriteLine(client + " would like to chat privately with you. Enter yes to accept the request or no to decline it.");
             }
-            for (client)
+            if (client.name == privateChatRequested)
             {
                 privateChatResponse = Console.ReadLine().ToLower();
                 if (privateChatResponse == "yes")
@@ -153,7 +151,7 @@ namespace Server
                 }
                 else if (privateChatResponse == "no")
                 {
-                    for (client.name)
+                    if (client.name == userName)
                     {
                         Console.WriteLine("Would you like to join the public chatroom? Enter yes or no.");
                         publicChatResponse = Console.ReadLine().ToLower();
@@ -180,20 +178,19 @@ namespace Server
             }
         }
 
-
         public void EnterPrivateChatroom()
         {
             Console.WriteLine("Enter your message or enter exit now to leave the private chatroom.");
             message = Console.ReadLine().ToLower();
+            while (message != "exit now")
+            {
+                client.Send(message);
+                EnterPrivateChatroom();
+            }
             if (message == "exit now")
             {
                 Console.WriteLine("Sorry, your friend has left the private chatroom.");
                 Chat();
-            }
-            else if (message != "exit now")
-            {
-                client.Send(message);
-                EnterPrivateChatroom();
             }
         }
 
@@ -211,8 +208,7 @@ namespace Server
                 inChatRoom = true;
                 while (inChatRoom == true)
                 {
-                    //threads
-                    //use for loop to send message for server to send message to a specific person
+                    message = client.Receive();
                 }
             }
             else if (userInput == "no")
@@ -244,9 +240,10 @@ namespace Server
                 Chat();
             }
         }
+
         public void ChatPrivately()
         {
-            for (client.name)
+            if (client.name == userName)
             {
                 Console.WriteLine("Would you like to chat privately with a friend? Enter yes or no");
                 userInput = Console.ReadLine();
@@ -281,10 +278,9 @@ namespace Server
             }
         }
 
-
         public void LeaveChatroom()
         {
-            for (client.name)
+            if (client.name == userName)
             {
                 Console.WriteLine("Thanks for chatting! Goodbye!");
             }

@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public class Program
+    class Logger : ILogger
     {
-        static void Main(string[] args)
+        public void Save()
         {
-            Logger logger = new Logger();
-            new Server(logger).Run();
-            Console.ReadLine();
+            throw new NotImplementedException();
         }
     }
 }
