@@ -29,9 +29,11 @@ namespace Server
         public bool privateChat;
         public string fileName;
         private ILogger logger;
-        //public string userName;
         public string DateTime;
-        private Logger logger1;
+        //private Logger logger1;
+        public string queue;
+        public string dequeue;
+        public string chatterOfChoice;
 
         public Server(ILogger logger)
         {
@@ -40,55 +42,18 @@ namespace Server
             this.logger = logger;
         }
 
-
         public void LogPublicChat(string userName, string message, string DateTime)
         {
             StreamWriter writer = new StreamWriter(new FileStream(fileName, FileMode.Append));
 
             writer.WriteLine("{0}{1}", userName, message, DateTime);
-
-            StreamReader reader = new StreamReader(new FileStream(fileName, FileMode.Append));
-            //try
-            //{
-            //    reader.ReadLine("{0}{1}", userName, message, DateTime);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.ToString());
-            //}
-            //finally
-            //{
-            //    Console.WriteLine(message);
-          //  }
-           }
-
-        //public void LogPublicChat()
-        //{
-        //    StreamWriter writer = new StreamWriter(new FileStream(fileName, FileMode.Append));
-        //    writer.WriteLine("{0}{1}", userName, message, DateTime);
-        //    StreamReader reader = new StreamReader(new FileStream(fileName, FileMode.Append));
-        //    reader.ReadLine();
-        //    try
-        //    {
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.ToString());
-        //    }
-        //    finally
-        //    {
-        //        Console.WriteLine(userName, message, DateTime);
-        //    }
-        //}
+        }
 
         public void Run()
         {
 
-            ClientName();
+            NameClient();
             AcceptClient();
-            //message = client.Receive();
-            //Respond(message);
             Chat();
             LeaveChatroom();
         }
@@ -105,11 +70,10 @@ namespace Server
             Console.WriteLine("Connected");
             NetworkStream stream = clientSocket.GetStream();
             client = new Client(stream, clientSocket);
-            //ClientName();
             NotificationOfNewChatter();
         }
 
-        public void ClientName()
+        public void NameClient()
         {
             Console.WriteLine("What is your name?");
             userName = Console.ReadLine();
@@ -132,7 +96,7 @@ namespace Server
 
         public void SendMessage()
         {
-            message = Console.ReadLine();
+            Messages.Dequeue();
             client.Send(message);
         }
 
@@ -140,7 +104,7 @@ namespace Server
         {
             if (client.name == userName)
             {
-                Console.WriteLine(client + " would like to chat privately with you. Enter yes to accept the request or no to decline it.");
+                Console.WriteLine(userName+ " would like to chat privately with you. Enter yes to accept the request or no to decline it.");
             }
             if (client.name == privateChatRequested)
             {
@@ -180,23 +144,42 @@ namespace Server
 
         public void EnterPrivateChatroom()
         {
-            Console.WriteLine("Enter your message or enter exit now to leave the private chatroom.");
-            message = Console.ReadLine().ToLower();
-            while (message != "exit now")
+            if (userName == client.name)
             {
-                client.Send(message);
-                EnterPrivateChatroom();
-            }
-            if (message == "exit now")
-            {
-                Console.WriteLine("Sorry, your friend has left the private chatroom.");
-                Chat();
+                Console.WriteLine("Enter your message or enter exit now to leave the private chatroom.");
+                message = Console.ReadLine().ToLower();
+                while (message != "exit now")
+                {
+                    client.Send(message);
+                    EnterPrivateChatroom();
+                }
+                if (message == "exit now")
+                {
+                    Console.WriteLine("Sorry, your friend has left the private chatroom.");
+                    Chat();
+                }
+                if (chatterOfChoice == privateChatRequested)
+                {
+                    Console.WriteLine("Enter your message or enter exit now to leave the private chatroom.");
+                    message = Console.ReadLine().ToLower();
+                    while (message != "exit now")
+                    {
+                        client.Send(message);
+                        EnterPrivateChatroom();
+                    }
+                    if (message == "exit now")
+                    {
+                        Console.WriteLine("Sorry, your friend has left the private chatroom.");
+                        Chat();
+                    }
+                }
             }
         }
 
+        
         public void NotificationOfNewChatter()
         {
-            Console.WriteLine(client.name + " has joined the chatroom.");
+            Console.WriteLine(userName + " has joined the chatroom.");
         }
 
         public void Chat()
@@ -208,7 +191,10 @@ namespace Server
                 inChatRoom = true;
                 while (inChatRoom == true)
                 {
-                    message = client.Receive();
+                    Message message = new Message(client, client.Receive());
+             
+                    LogPublicChat(userName, message.Body, DateTime);
+                    AddMessageToQueue(message);
                 }
             }
             else if (userInput == "no")
@@ -220,7 +206,7 @@ namespace Server
                 {
                     privateChat = true;
                     Console.WriteLine("Who would you like to chat with?");
-                    privateChatRequested = Console.ReadLine();
+                    chatterOfChoice = Console.ReadLine();
                     CreatePrivateChatroom();
                 }
                 else if (userInput == "no")

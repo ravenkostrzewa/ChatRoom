@@ -38,6 +38,7 @@ namespace Client
             byte[] message = Encoding.ASCII.GetBytes(messageString);
             stream.Write(message, 0, message.Count());
         }
+
         public void ReceiveMessage()
         {
             byte[] receivedMessage = new byte[256];

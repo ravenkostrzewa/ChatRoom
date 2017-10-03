@@ -14,6 +14,7 @@ namespace Server
         public DateTime SentTime { get; set; }
         public DateTime JoinChat { get; set; }
         public DateTime LeaveChat { get; set; }
+
         public Message(Client Sender, string Body)
         {
             sender = Sender;
