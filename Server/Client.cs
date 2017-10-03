@@ -24,6 +24,7 @@ namespace Server
             byte[] message = Encoding.ASCII.GetBytes(Message);
             stream.Write(message, 0, message.Count());
         }
+
         public string Receive()
         {
             byte[] receivedMessage = new byte[256];

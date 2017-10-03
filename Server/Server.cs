@@ -74,7 +74,7 @@ namespace Server
 
         public void NameClient()
         {
-            Console.WriteLine("What is your name?");
+            Console.WriteLine("Welcome to Chat Room! What is your name?");
             userName = Console.ReadLine();
         }
 
