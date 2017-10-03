@@ -30,7 +30,6 @@ namespace Server
         public string fileName;
         private ILogger logger;
         public string DateTime;
-        //private Logger logger1;
         public string queue;
         public string dequeue;
         public string chatterOfChoice;
